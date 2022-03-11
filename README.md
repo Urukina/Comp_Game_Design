@@ -1,3 +1,6 @@
-# Pursuit Game Dev Tool
+# Game design source files
 
-This is a prototye game I developed for my game design course (CS 134) in SJSU
+Source files. You will have to make a new openframeworks project
+and copy the source files to the src to the src directory.
+Download for openframeworks:
+https://openframeworks.cc/download/
