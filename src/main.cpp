@@ -1,3 +1,6 @@
+/* Nate Agpaoa - CS 134 Section 1
+*
+*/
 #include "ofMain.h"
 #include "ofApp.h"
 
@@ -9,8 +12,6 @@ int main() {
 	// can be OF_WINDOW or OF_FULLSCREEN
 	// pass in width and height too:
 	ofRunApp(new ofApp());
-
-	// always good practice to return 0
 	return 0;
 }
 

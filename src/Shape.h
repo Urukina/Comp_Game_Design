@@ -1,4 +1,7 @@
 #pragma once
+/* Nate Agpaoa - CS 134 Section 1
+*
+*/
 #include "ofMain.h"
 class Shape {
 private:

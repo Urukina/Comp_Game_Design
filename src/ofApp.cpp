@@ -1,3 +1,6 @@
+/* NNate Agpaoa - CS 134 Section 1
+*
+*/
 #include "ofApp.h"
 #include <time.h>
 
@@ -15,7 +18,7 @@ void ofApp::setup() {
 	gui.add(header.setup("Draw heading", false));
 	gui.add(image.setup("Draw player sprite", false));
 	gui.add(aImage.setup("Draw agent sprite", false));
-	gui.add(rate.setup("rate", 1, 0.5, 5));
+	gui.add(rate.setup("rate", 0.5, 0.5, 5));
 	gui.add(life.setup("life", 5, 0, 10));
 	gui.add(numAgents.setup("number of agents", 1, 1, 10));
 	guiHide = true;
@@ -242,9 +245,11 @@ void ofApp::keyPressed(int key) {
 				if (!e->started) {
 					gameOver = false;
 					e->start();
-					p.nEnergy = level;
 				}
 			}
+			tSec = 0;
+			tMin = 0;
+			p.nEnergy = level;
 			gameStart = true;
 		}
 		else {
@@ -253,16 +258,15 @@ void ofApp::keyPressed(int key) {
 				int newRandXPos = rand() % ofGetWindowWidth();
 				int newRandYPos = rand() % ofGetWindowHeight();
 				if (!e->started) {
-					elapsedTime = ofGetElapsedTimeMillis();
 					gameOver = false;
 					e->setSpeed(enemySpeed);
 					e->setPos(glm::vec3(newRandXPos, newRandYPos, 0));
 					e->start();
-					p.nEnergy = level;
-					tSec = 0;
-					tMin = 0;
 				}
 			}
+			p.nEnergy = level;
+			tSec = 0;
+			tMin = 0;
 		}
 	}
 }

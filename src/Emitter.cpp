@@ -1,3 +1,6 @@
+/* Nate Agpaoa - CS 134 Section 1
+*
+*/
 #include "ofMain.h"
 #include "Emitter.h"
 

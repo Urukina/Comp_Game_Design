@@ -1,7 +1,7 @@
 #pragma once
 /* A modified version of the Sprite.h class that uses the triangle shape class.
 *  The agents are represented as triangles as default.
-*
+*  Nate Agpaoa - CS 134 Section 1
 */
 #include "Player.h"
 class Sprite : public TriangleShape {

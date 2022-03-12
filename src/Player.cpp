@@ -1,7 +1,9 @@
 #include "ofMain.h"
 #include "Player.h"
 
-
+/*Nate Agpaoa - CS 134 Section 1
+* 
+*/
 
 TriangleShape::TriangleShape(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3) {
 	verts.push_back(p1);
