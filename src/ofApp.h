@@ -38,7 +38,7 @@ public:
 
 	ofImage background;
 
-	int randXPos, randYPos;
+	int randXPos, randYPos, offScreen;
 
 	ofxFloatSlider speed;
 	ofxFloatSlider scaleTo;
@@ -51,6 +51,8 @@ public:
 	ofxPanel gui;
 
 	map<int, bool> keymap;
+
+	ofImage playerImage, agentImage;
 
 	bool guiHide;
 

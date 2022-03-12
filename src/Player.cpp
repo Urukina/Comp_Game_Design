@@ -10,8 +10,6 @@ TriangleShape::TriangleShape(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3) {
 }
 
 void TriangleShape::draw() {
-	ofSetColor(ofColor::red);
-	ofFill();
 	ofPushMatrix();
 	ofMultMatrix(getMatrix());
 	ofDrawTriangle(verts[0], verts[1], verts[2]);
@@ -41,20 +39,17 @@ Player::Player(glm::vec3 p1, glm::vec3 p2, glm::vec3 p3) {
 }
 
 void Player::draw() {
-	ofSetColor(ofColor::burlyWood);
-	ofFill();
-	ofPushMatrix();
-	ofMultMatrix(getMatrix());
 	if (isDrawn()) {
+		ofPushMatrix();
+		ofMultMatrix(getMatrix());
 		img.loadImage("images/neso_wish.png");
 		img.draw(verts[0].x - img.getWidth() / 4.5f + 20, verts[0].y - img.getHeight());
-		//setDrawn(false);
+		ofPopMatrix();
 	}
 	else {
-		ofDrawTriangle(verts[0], verts[1], verts[2]);
-		//setDrawn(false);
+		TriangleShape::draw();
 	}
-	ofPopMatrix();
+	
 }
 
 bool Player::inside(const glm::vec3 p) {
@@ -76,12 +71,4 @@ bool Player::inside(const glm::vec3 p) {
 glm::vec3 Player::heading() {
 	float angle = glm::radians(getRotation());
 	return glm::normalize(glm::vec3(glm::sin(angle), -glm::cos(angle), 0.0));
-}
-
-void Player::setEnergy(int e) {
-	nEnergy = e;
-}
-
-bool Player::outOfBounds(glm::vec3 p) {
-	return inside(p);
 }

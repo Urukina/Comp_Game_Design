@@ -20,20 +20,15 @@ Emitter::Emitter(SpriteSystem* spriteSys) {
 }
 
 void Emitter::draw() {
-
 	if (drawable) {
-		ofSetColor(ofColor::aqua);
-		ofFill();
-		ofPushMatrix();
-		ofMultMatrix(getMatrix());
-		ofDrawTriangle(verts[0], verts[1], verts[2]);
-		ofPopMatrix();
+		TriangleShape::draw();
 	}
 	sys->draw();
 }
 
 void Emitter::update() {
 	if (!started) return;
+
 
 	float time = ofGetElapsedTimeMillis();
 	if ((time - lastSpawned) > (1000.0 / rate)) {
@@ -44,12 +39,10 @@ void Emitter::update() {
 		sprite.lifespan = lifespan;
 		sprite.setPos(getPos());
 		sprite.heading = heading;
-		
-		//cout << sprite.getRotation() + deg << endl;
 		sprite.birthtime = time;
 		sprite.pHead = pHead;
 		if (haveChildImg) {
-			sprite.setImage(childImg, haveChildImg);
+			sprite.drawable = true;
 		}
 		sys->add(sprite);
 		lastSpawned = time;
@@ -88,6 +81,7 @@ void Emitter::setSpriteRotation(float r) {
 
 void Emitter::setHeadingSprite(glm::vec3 hs) {
 	heading = glm::normalize(hs - getPos());
+	pHead = hs;
 }
 
 float Emitter::rotateSprite(glm::vec3 f, glm::vec3 g) {
@@ -95,8 +89,5 @@ float Emitter::rotateSprite(glm::vec3 f, glm::vec3 g) {
 	return glm::degrees(rot);
 }
 
-void Emitter::setChildImage(ofImage img, bool toggle) {
-	childImg = img;
-	haveChildImg = toggle;
-}
+
 

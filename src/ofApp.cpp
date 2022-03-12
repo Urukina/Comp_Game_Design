@@ -5,8 +5,6 @@
 void ofApp::setup() {
 	
 	srand(time(nullptr));
-	elapsedTime = ofGetElapsedTimeMillis();
-	//sp.loadImage("images/agent_sprite.png");
 
 	// gui setup
 	ofSetVerticalSync(true);
@@ -17,8 +15,8 @@ void ofApp::setup() {
 	gui.add(header.setup("Draw heading", false));
 	gui.add(image.setup("Draw player sprite", false));
 	gui.add(aImage.setup("Draw agent sprite", false));
-	gui.add(rate.setup("rate", 0.5, 0.5, 5));
-	gui.add(life.setup("life", 0, 1, 10));
+	gui.add(rate.setup("rate", 1, 0.5, 5));
+	gui.add(life.setup("life", 5, 0, 10));
 	gui.add(numAgents.setup("number of agents", 1, 1, 10));
 	guiHide = true;
 
@@ -26,7 +24,6 @@ void ofApp::setup() {
 	p = Player(glm::vec3(-50, 50, 0), glm::vec3(50, 50, 0), glm::vec3(0, -50, 0));
 	p.setPos(glm::vec3(ofGetWindowWidth() / 2.0, ofGetWindowHeight() / 2.0, 0));
 	p.nEnergy = level;
-
 
 	// agent setup
 	numEmitters = 1;
@@ -43,9 +40,9 @@ void ofApp::setup() {
 		multAgents.push_back(agent);
 		agent->start();
 	}
-	
+
+	offScreen = 0;
 	background.loadImage("images/background_edited.png");
-	screenSize = glm::vec3(ofGetWindowWidth(), ofGetWindowHeight(), 0);
 
 }
 
@@ -59,7 +56,8 @@ void ofApp::update() {
 		e->setRate(rate);
 		e->setLifespan(life * 1000);
 		e->setHeadingSprite(p.getPos());
-		e->setChildImage(sp, aImage);
+		e->haveChildImg = aImage;
+		//e->setPos(e->getPos() + 1 * glm::normalize(p.getPos() - e->getPos()));
 		e->update();
 	}
 	if (numEmitters > numAgents) {
@@ -114,12 +112,10 @@ void ofApp::update() {
 
 //--------------------------------------------------------------
 void ofApp::draw() {
-	background.draw(0, 0);
+	background.draw(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
 	string nEnergyText, elapsedTime, fps;
 	string totalTime;
 	if (!gameStart) {
-		ofSetColor(ofColor::tomato);
-		ofFill();
 		ofDrawBitmapString("PRESS SPACE TO START", ofPoint(ofGetWindowWidth() / 2, ofGetWindowHeight() / 2));
 		ofDrawBitmapString("Controls:", ofPoint(ofGetWindowWidth() / 2, ofGetWindowHeight() / 2 + 10));
 		ofDrawBitmapString("Up Arrow/Down Arrow: Move Up/Down", ofPoint(ofGetWindowWidth() / 2, ofGetWindowHeight() / 2 + 20));
@@ -127,12 +123,7 @@ void ofApp::draw() {
 		ofDrawBitmapString("F4: Toggle Fullscreen", ofPoint(ofGetWindowWidth() / 2, ofGetWindowHeight() / 2 + 40));
 	}
 	else if (gameOver) {
-		ofSetColor(ofColor::lightGoldenRodYellow);
-		ofFill();
-		//cout << tSec << " " << tMin << endl;
 		ofDrawBitmapString("GAME OVER", ofPoint(ofGetWindowWidth() / 2, ofGetWindowHeight() / 2));
-		ofDrawBitmapString("Total time:", ofPoint(ofGetWindowWidth() / 2, ofGetWindowHeight() / 2) + 20);
-		//ofDrawBitmapString(elapsedTime, ofPoint(ofGetWindowWidth() / 2, ofGetWindowHeight() / 2) + 40);
 		ofDrawBitmapString("Press Spacebar to play again", ofPoint(ofGetWindowWidth() / 2, ofGetWindowHeight() / 2 + 60));
 	}
 	else {
@@ -141,18 +132,17 @@ void ofApp::draw() {
 			e->draw();
 		}
 		if (header) {
-			ofSetColor(ofColor::bisque);
 			ofDrawLine(p.getPos(), p.getPos() + 75 * p.heading());
 		}
 		// no. of lives remaining
-		nEnergyText += "Lives: " + std::to_string(p.nEnergy);
-		ofDrawBitmapString(nEnergyText, ofPoint(10, 20));
+		nEnergyText += "Lives: " + std::to_string(p.nEnergy) + "/" + std::to_string(level);
+		ofDrawBitmapString(nEnergyText, ofPoint(ofGetWindowWidth()-90, 20));
 		// display time
 		elapsedTime += std::to_string(tMin) + ":" + std::to_string(tSec);
-		ofDrawBitmapString(elapsedTime, ofPoint(10, 40));
-		// display fps (should be running at 165 fps since I'm using a 165 hz monitor)
+		ofDrawBitmapString(elapsedTime, ofPoint(ofGetWindowWidth()-40, 40));
+		// display fps
 		fps += "FPS: " + std::to_string(frameRate);
-		ofDrawBitmapString(fps, ofPoint(10, 60));
+		ofDrawBitmapString(fps, ofPoint(ofGetWindowWidth()-70, 60));
 	}
 	
 	if (!guiHide) {
@@ -176,9 +166,12 @@ void ofApp::checkCollisions() {
 }
 
 void ofApp::outOfBounds() {
-	if (p.inside(screenSize)) {
-		//cout << "Player out of bounds" << endl;
-		//p.setPos(glm::vec3(ofGetWindowWidth()/2, ofGetWindowHeight()/2,0));
+	if (p.getPos().x < 0 || p.getPos().y < 0 || p.getPos().x > ofGetWindowWidth() || p.getPos().y > ofGetWindowHeight()) {
+		p.setPos(glm::vec3(ofGetWindowWidth()/2, ofGetWindowHeight()/2,0));
+		offScreen++;
+		if (offScreen != 0 && offScreen % 3 == 0) {
+			p.nEnergy--;
+		}
 	}
 }
 
@@ -242,13 +235,11 @@ void ofApp::keyPressed(int key) {
 		ofToggleFullscreen();
 	}
 	if (keymap['q']) {
-		cout << numEmitters << endl;
 	}
-	if (keymap [' ']) { //spacebar is 32
+	if (keymap [' ']) {
 		if (!gameStart) {
 			for (Emitter* e : multAgents) {
 				if (!e->started) {
-					//elapsedTime = ofGetElapsedTimeMillis();
 					gameOver = false;
 					e->start();
 					p.nEnergy = level;

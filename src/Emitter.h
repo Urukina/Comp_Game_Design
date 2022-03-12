@@ -19,7 +19,6 @@ public:
 	void setRate(float);
 	void setHeadingSprite(glm::vec3);
 	float rotateSprite(glm::vec3 f, glm::vec3 g);
-	void setChildImage(ofImage img, bool toggle);
 	void update();
 	SpriteSystem* sys;
 	float rate;
