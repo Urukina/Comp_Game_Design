@@ -63,6 +63,7 @@ public:
 
 	float elapsedTime, lastTime;
 	int tSec, tMin, frameRate, enemySpeed;
+	float tSeconds;
 
 	glm::vec3 screenSize;
 };

@@ -1,4 +1,4 @@
-/* NNate Agpaoa - CS 134 Section 1
+/* Nate Agpaoa - CS 134 Section 1
 *
 */
 #include "ofApp.h"
@@ -72,9 +72,10 @@ void ofApp::update() {
 	checkCollisions();
 	outOfBounds();
 	// keep track of game time
-	if (!gameOver) {
+	if (!gameOver || !gameStart) {
 		elapsedTime = ofGetElapsedTimeMillis();
 		if ((elapsedTime - lastTime) > 1000) {
+			tSeconds++;
 			tSec++;
 			// make the game challenging overtime by increasing the speed of the agents
 			if (tSec % 30  == 0) {
@@ -127,7 +128,9 @@ void ofApp::draw() {
 	}
 	else if (gameOver) {
 		ofDrawBitmapString("GAME OVER", ofPoint(ofGetWindowWidth() / 2, ofGetWindowHeight() / 2));
-		ofDrawBitmapString("Press Spacebar to play again", ofPoint(ofGetWindowWidth() / 2, ofGetWindowHeight() / 2 + 60));
+		elapsedTime += std::to_string(tSeconds);
+		ofDrawBitmapString(elapsedTime, ofPoint(ofGetWindowWidth()/2, ofGetWindowHeight()/2 + 20));
+		ofDrawBitmapString("Press Spacebar to play again", ofPoint(ofGetWindowWidth() / 2, ofGetWindowHeight() / 2 + 40));
 	}
 	else {
 		p.draw();
@@ -141,7 +144,7 @@ void ofApp::draw() {
 		nEnergyText += "Lives: " + std::to_string(p.nEnergy) + "/" + std::to_string(level);
 		ofDrawBitmapString(nEnergyText, ofPoint(ofGetWindowWidth()-90, 20));
 		// display time
-		elapsedTime += std::to_string(tMin) + ":" + std::to_string(tSec);
+		elapsedTime += std::to_string(tSeconds);
 		ofDrawBitmapString(elapsedTime, ofPoint(ofGetWindowWidth()-40, 40));
 		// display fps
 		fps += "FPS: " + std::to_string(frameRate);
@@ -247,6 +250,7 @@ void ofApp::keyPressed(int key) {
 					e->start();
 				}
 			}
+			tSeconds = 0;
 			tSec = 0;
 			tMin = 0;
 			p.nEnergy = level;
@@ -265,6 +269,7 @@ void ofApp::keyPressed(int key) {
 				}
 			}
 			p.nEnergy = level;
+			tSeconds = 0;
 			tSec = 0;
 			tMin = 0;
 		}
